@@ -58,8 +58,13 @@ blink:
       - wifi_strength
 
 media_player:
+    # Living Room
   - platform: braviatv
     host: !secret sony_ip
+    
+    # Bedroom
+  - platform: samsungtv
+    host: !secret samsung_tv_ip   
 
 sensor 3:
   - platform: apcupsd
@@ -69,9 +74,11 @@ sensor 3:
       - timeleft
 
 amcrest:
-  - host: IP_ADDRESS_CAMERA
+  - host: !secret Amcrest_ip
     username: !secret amcrest_user
     password: !secret amcrest_pass
+
+emulated_hue:
 
 group: !include groups.yaml
 automation: !include automations.yaml
