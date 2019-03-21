@@ -66,13 +66,6 @@ media_player:
   - platform: samsungtv
     host: !secret samsung_tv_ip   
 
-sensor 3:
-  - platform: apcupsd
-    resources:
-      - linev
-      - loadpct
-      - timeleft
-
 amcrest:
   - host: !secret Amcrest_ip
     username: !secret amcrest_user
@@ -80,6 +73,41 @@ amcrest:
 
 emulated_hue:
 
+apcupsd:
+  host: !secret apc_ip
+  port: 3551
+
+sensor UPS:
+  - platform: apcupsd
+    resources:
+      - bcharge
+      - loadpct
+      - timeleft
+      - linev     
+      - status
+
+speedtestdotnet:
+  scan_interval:
+    minutes: 35
+  monitored_conditions:
+    - ping
+    - download
+    - upload
+
+#Nmap placeholder
+
+#PS4 placeholder
+
+#nodeMCU MQTT placeholder
+
+#Google Maps placeholder
+
+#WoL placeholder
+
+#kodi placeholder
+
+#GPS logger placeholder
+      
 group: !include groups.yaml
 automation: !include automations.yaml
 script: !include scripts.yaml
