@@ -10,7 +10,7 @@
     service: light.turn_off
   - data:
       entity_id: alarm_control_panel.blink_home
-    service: alarm_control_panel.alarm_arm_home
+    service: alarm_control_panel.alarm_disarm
 - id: '1552795554870'
   alias: Arrive Home
   trigger:
