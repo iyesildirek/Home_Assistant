@@ -34,7 +34,7 @@ sensor:
 sensor 2:
   platform: dht
   sensor: DHT22
-  pin: 23
+  pin: 4
   monitored_conditions:
     - temperature
     - humidity
@@ -82,10 +82,10 @@ sensor UPS:
     resources:
       - bcharge
       - loadpct
-      - timeleft
-      - linev     
-      - status
-
+      - timeleft      
+      - model
+      - numxfers      
+      
 speedtestdotnet:
   scan_interval:
     minutes: 35
@@ -95,8 +95,6 @@ speedtestdotnet:
     - upload
 
 #Nmap placeholder
-
-#PS4 placeholder
 
 #nodeMCU MQTT placeholder
 
