@@ -60,10 +60,12 @@ blink:
 media_player:
     # Living Room
   - platform: braviatv
+    name: Sony TV
     host: !secret sony_ip
     
     # Bedroom
   - platform: samsungtv
+    name: Samsung TV
     host: !secret samsung_tv_ip   
 
 amcrest:
@@ -94,10 +96,49 @@ speedtestdotnet:
     - download
     - upload
 
+zone:
+  - name: Work
+    latitude: !secret work_lat
+    longitude: !secret work_long
+    radius: 350
+    icon: mdi:work
+    
+  # This will override the default home zone
+  - name: Home
+    latitude: !secret home_lat 
+    longitude: !secret home_long 
+    radius: 450
+    icon: mdi:account-multiple
+
+# Broker Server info
+mqtt:
+  broker: !secret mqtt_ip
+  port: 1883
+  client_id: home-assistant
+  username: Izzy
+  password: What1234
+ 
 #Nmap placeholder
-
+device_tracker:
+  - platform: nmap_tracker
+    hosts: !secret nmap_host
+    home_interval: 10
+    consider_home: 180     
+    exclude:
+     - !secret nmap_ex1
+     - !secret nmap_ex2
+    new_device_defaults:
+      track_new_devices: true
+      hide_if_away: false
+    
 #nodeMCU MQTT placeholder
-
+light:
+  platform: mqtt
+  name: 'Node Light'
+  state_topic: 'home/light1/status'
+  command_topic: 'home/light1/switch'
+  optimistic: false
+  
 #Google Maps placeholder
 
 #WoL placeholder
