@@ -9,28 +9,37 @@ homeassistant:
   # metric for Metric, imperial for Imperial
   unit_system: imperial
   # Pick yours from here: http://en.wikipedia.org/wiki/List_of_tz_database_time_zones
-  time_zone: America/Chicago
+  time_zone: America/Puerto_Rico
   # Customization file
   customize: !include customize.yaml
 
 # Configure a default setup of Home Assistant (frontend, api, etc)
 default_config:
 
-# Show the introduction message on startup.
-introduction:
-
 # Uncomment this if you are using SSL/TLS, running in Docker container, etc.
 http:
-  api_password: !secret api_pass
+#  api_password: !secret api_pass
   server_port: !secret serv_port
-  ssl_certificate: !secret ssl_certificate
-  ssl_key: !secret ssl_key
-  base_url: !secret base_url
-# Sensors
+#  ssl_certificate: !secret ssl_certificate
+#  ssl_key: !secret ssl_key
+#  base_url: !secret base_url
+ 
+duckdns:
+  domain: !secret duckdns_domain
+  access_token: !secret duckdns_token
+  
+vesync:
+  username: !secret vesync_user
+  password: !secret vesync_pass
+
+#---------------- Start Sensors ------------------#  
 sensor:
   # Weather prediction
   - platform: yr
   
+  - platform: noaa_tides
+    station_id: 9755371
+    
 sensor 2:
   platform: dht
   sensor: DHT22
@@ -38,10 +47,67 @@ sensor 2:
   monitored_conditions:
     - temperature
     - humidity
-      
+
+#NodeMCU MQTT Sensors    
+sensor node_t:
+  platform: mqtt
+  name: "Node_Temp"
+  state_topic: "backyard/temperature"
+  qos: 0
+  unit_of_measurement: "ºF"
+  
+sensor node_h:  
+  platform: mqtt
+  name: "Node_Hum"
+  state_topic: "backyard/humidity"
+  qos: 0
+  unit_of_measurement: "%"
+
+sensor UPS:
+  - platform: apcupsd
+    resources:
+      - bcharge
+      - loadpct
+      - timeleft      
+      - model
+      - numxfers  
+      - linev         
+
+sensor pr:
+  - platform: darksky
+    api_key: !secret dark_sky_api
+    latitude: !secret pr_lat  
+    longitude: !secret pr_lon
+    units: us      
+    monitored_conditions:
+      - summary
+      - icon
+      - temperature    
+      - humidity      
+      - wind_speed  
+      - uv_index   
+
+sensor outlets:
+  - platform: template
+    sensors:  
+      vesync_switch_watts:
+        friendly_name_template: "{{ states.switch.vesync_switch.name}} Current Consumption"
+        value_template: '{{ states.switch.vesync_switch.attributes["current_power_w"] | float }}'
+        unit_of_measurement: 'W'
+      vesync_switch_total_kwh:
+        friendly_name_template: "{{ states.switch.vesync_switch.name}} Total Consumption"
+        value_template: '{{ states.switch.vesync_switch.attributes["today_energy_kwh"] | float }}'
+        unit_of_measurement: 'kWh'
+      vesync_switch_volts:
+        friendly_name_template: "{{ states.switch.vesync_switch.name}} Voltage"
+        value_template: '{{ states.switch.vesync_switch.attributes["voltage"] | float }}'
+        unit_of_measurement: 'V'
+        
+#---------------- End Sensors ------------------#
 # Text to speech
 tts:
-  - platform: google
+  - platform: google_translate
+    service_name: google_say
 
 blink:
   username: !secret blink_user
@@ -79,15 +145,6 @@ apcupsd:
   host: !secret apc_ip
   port: 3551
 
-sensor UPS:
-  - platform: apcupsd
-    resources:
-      - bcharge
-      - loadpct
-      - timeleft      
-      - model
-      - numxfers      
-      
 speedtestdotnet:
   scan_interval:
     minutes: 35
@@ -108,45 +165,50 @@ zone:
     latitude: !secret home_lat 
     longitude: !secret home_long 
     radius: 450
-    icon: mdi:account-multiple
+    icon: mdi:home
 
 # Broker Server info
 mqtt:
   broker: !secret mqtt_ip
   port: 1883
   client_id: home-assistant
-  username: Izzy
-  password: What1234
+  username: !secret mqtt_user
+  password: !secret mqtt_pass
  
-#Nmap placeholder
 device_tracker:
+#Nmap 
   - platform: nmap_tracker
     hosts: !secret nmap_host
-    home_interval: 10
+    home_interval: 1
     consider_home: 180     
     exclude:
      - !secret nmap_ex1
      - !secret nmap_ex2
     new_device_defaults:
       track_new_devices: true
-      hide_if_away: false
+#      hide_if_away: false
+
+#GPSLogger      
+#  - platform: gpslogger
+
+#Google Maps      
+  - platform: google_maps
+    username: !secret google_maps_user
+    password: !secret google_maps_pass
+    max_gps_accuracy: 200
     
-#nodeMCU MQTT placeholder
+#NodeMCU MQTT Lights
 light:
   platform: mqtt
   name: 'Node Light'
   state_topic: 'home/light1/status'
   command_topic: 'home/light1/switch'
-  optimistic: false
-  
-#Google Maps placeholder
-
+  optimistic: false   
+      
 #WoL placeholder
 
 #kodi placeholder
-
-#GPS logger placeholder
-      
+ 
 group: !include groups.yaml
 automation: !include automations.yaml
 script: !include scripts.yaml

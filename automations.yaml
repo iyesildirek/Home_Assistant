@@ -1,5 +1,5 @@
 - id: '1552795199112'
-  alias: Out of Home
+  alias: Goodmorning
   trigger:
   - event: sunrise
     platform: sun
@@ -8,9 +8,6 @@
   - data:
       entity_id: light.porch
     service: light.turn_off
-  - data:
-      entity_id: alarm_control_panel.blink_home
-    service: alarm_control_panel.alarm_disarm
 - id: '1552795554870'
   alias: Arrive Home
   trigger:
@@ -18,9 +15,6 @@
     platform: sun
   condition: []
   action:
-  - data:
-      entity_id: light.porch
-    service: light.turn_on
   - data:
       entity_id: alarm_control_panel.blink_home
     service: alarm_control_panel.alarm_arm_away
